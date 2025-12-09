@@ -49,6 +49,10 @@ jobs:
             type=semver,pattern={{major}}
             type=sha
 
+      - name: Setup dependencies
+        run: |
+          ./dep.sh
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
