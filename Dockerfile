@@ -7,4 +7,8 @@ RUN apt-get update && \
 
 ADD rawtherapee /opt/rawtherapee
 
-ENV PATH="/opt/rawtherapee/usr/bin:$PATH"
+ADD exiftool /opt/exiftool
+
+ENV PATH="/opt/bin:$PATH"
+
+ADD bin/ /opt/bin/

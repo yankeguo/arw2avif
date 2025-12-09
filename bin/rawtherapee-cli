@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -eu
+
+exec "/opt/rawtherapee/usr/bin/rawtherapee-cli" "$@"

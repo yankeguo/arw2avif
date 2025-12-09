@@ -11,3 +11,11 @@ chmod +x rawtherapee.AppImage
 rm rawtherapee.AppImage
 
 mv squashfs-root rawtherapee
+
+curl -sSLo exiftool.tar.gz 'https://github.com/exiftool/exiftool/archive/refs/tags/13.43.tar.gz'
+
+tar -xzf exiftool.tar.gz
+
+mv exiftool-13.43 exiftool
+
+rm exiftool.tar.gz
