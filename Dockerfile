@@ -1,7 +1,7 @@
 FROM debian:13
 
 RUN apt-get update && \
-    apt-get install -y libexpat1 && \
+    apt-get install -y libexpat1 ffmpeg && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
