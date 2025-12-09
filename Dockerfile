@@ -6,3 +6,5 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ADD rawtherapee /opt/rawtherapee
+
+ENV PATH="/opt/rawtherapee/usr/bin:$PATH"
