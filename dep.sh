@@ -6,7 +6,7 @@ curl -sSLo rawtherapee.AppImage 'https://rawtherapee.com/shared/builds/linux/Raw
 
 chmod +x rawtherapee.AppImage
 
-./rawtherapee.AppImage --appimage-extract
+./rawtherapee.AppImage --appimage-extract >/dev/null
 
 rm rawtherapee.AppImage
 
