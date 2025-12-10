@@ -60,7 +60,6 @@ for input_file in "$@"; do
         -cpu-used 4 \
         -threads 0 \
         -row-mt 1 \
-        -tiles 2x2 \
         -still-picture 1 \
         -y \
         "$avif_file"
