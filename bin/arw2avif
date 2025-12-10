@@ -51,12 +51,12 @@ for input_file in "$@"; do
     fi
 
     # Step 2: Convert TIF to AVIF using ffmpeg
-    # Optimized for high-resolution DSLR RAW files
+    # Optimized for high-resolution DSLR RAW archival
     echo "  Converting to AVIF..."
     ffmpeg -hide_banner -i "$tif_file" \
         -c:v libaom-av1 \
         -pix_fmt yuv422p12le \
-        -crf 24 \
+        -crf 12 \
         -cpu-used 4 \
         -threads 0 \
         -row-mt 1 \
