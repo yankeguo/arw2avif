@@ -56,7 +56,7 @@ for input_file in "$@"; do
     ffmpeg -hide_banner -i "$tif_file" \
         -c:v libaom-av1 \
         -pix_fmt yuv422p12le \
-        -crf 12 \
+        -crf 8 \
         -cpu-used 4 \
         -threads 0 \
         -row-mt 1 \
