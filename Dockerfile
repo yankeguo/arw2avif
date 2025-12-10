@@ -9,6 +9,4 @@ ADD rawtherapee /opt/rawtherapee
 
 ADD exiftool /opt/exiftool
 
-ENV PATH="/opt/bin:$PATH"
-
-ADD bin/ /opt/bin/
+ADD bin/ /usr/local/bin/

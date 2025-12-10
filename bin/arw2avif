@@ -1,0 +1,86 @@
+#!/bin/bash
+
+set -eu
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Check if at least one argument is provided
+if [[ $# -eq 0 ]]; then
+    echo "Usage: arw2avif <file1.ARW> [file2.ARW] ..." >&2
+    exit 1
+fi
+
+# Validate all input files first
+for input_file in "$@"; do
+    # Check if file exists
+    if [[ ! -f "$input_file" ]]; then
+        echo "Error: File not found: $input_file" >&2
+        exit 1
+    fi
+
+    # Check extension (case-insensitive)
+    extension="${input_file##*.}"
+    if [[ ! "${extension,,}" == "arw" ]]; then
+        echo "Error: File must have .ARW extension (case-insensitive): $input_file" >&2
+        exit 1
+    fi
+done
+
+# Process each file
+for input_file in "$@"; do
+    echo "Processing: $input_file"
+
+    # Get the directory and base name (without extension)
+    input_dir="$(dirname "$input_file")"
+    input_basename="$(basename "$input_file")"
+    base_name="${input_basename%.*}"
+
+    # rawtherapee-cli outputs XXXX.tif in the same directory as input
+    tif_file="${input_dir}/${base_name}.tif"
+    avif_file="${input_dir}/${base_name}.avif"
+
+    # Step 1: Convert ARW to TIF using rawtherapee-cli
+    echo "  Converting to TIF..."
+    "$SCRIPT_DIR/rawtherapee-cli" -t -b16 -Y -c "$input_file"
+
+    # Check if TIF was created
+    if [[ ! -f "$tif_file" ]]; then
+        echo "Error: rawtherapee-cli failed to create: $tif_file" >&2
+        exit 1
+    fi
+
+    # Step 2: Convert TIF to AVIF using ffmpeg
+    # Optimized for high-resolution DSLR RAW files
+    echo "  Converting to AVIF..."
+    ffmpeg -hide_banner -i "$tif_file" \
+        -c:v libaom-av1 \
+        -pix_fmt yuv422p12le \
+        -crf 24 \
+        -cpu-used 4 \
+        -threads 0 \
+        -row-mt 1 \
+        -tiles 2x2 \
+        -still-picture 1 \
+        -y \
+        "$avif_file"
+
+    # Check if AVIF was created
+    if [[ ! -f "$avif_file" ]]; then
+        echo "Error: ffmpeg failed to create: $avif_file" >&2
+        rm -f "$tif_file"
+        exit 1
+    fi
+
+    # Step 3: Copy EXIF data from ARW to AVIF
+    echo "  Copying EXIF data..."
+    "$SCRIPT_DIR/exiftool" -overwrite_original -TagsFromFile "$input_file" -all:all "$avif_file"
+
+    # Step 4: Clean up intermediate TIF file
+    echo "  Cleaning up..."
+    rm -f "$tif_file"
+
+    echo "  Done: $avif_file"
+done
+
+echo "All files processed successfully."
